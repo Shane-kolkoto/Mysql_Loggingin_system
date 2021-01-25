@@ -2,19 +2,10 @@
 import mysql.connector
 from tkinter import messagebox as mb
 from tkinter import *
-from PIL import ImageTk, Image
+from PIL import Image
+from PIL import ImageTk
 from datetime import *
 import os
-
-db = mysql.connector.connect(
-    user="root",
-    password="Shane3004#",
-    host="localhost",
-    database="lifechoicesonline",
-    auth_plugin="mysql_native_password"
-)
-
-cursor = db.cursor()
 
 
 admin_login = Tk()
@@ -23,16 +14,30 @@ admin_login.title("Admin")
 
 
 #Welcome intro
-pic = '../images/header.png'
+pic = 'header.png'
 img1 = ImageTk.PhotoImage(Image.open(pic))
 panel = Label(admin_login, image=img1, width=400, bg="black")
 panel.place(x=20, y=0)
 
+db = mysql.connector.connect(
+    user="lifechoices",
+    password="@Lifechoices1234",
+    host="localhost",
+    database="lifechoicesonline",
+    auth_plugin="mysql_native_password"
+)
+cursor=db.cursor()
+cursor.execute(
+    "CREATE TABLE IF NOT EXISTS admin(id int(11) Not null primary key AUTO_INCREMENT, full_name varchar(60) Default null, "
+    "username varchar(50) Default null ,password varchar(20) Default null)")
+db.commit()
 
+cursor.execute("INSERT INTO admin(full_name, username, password) \
+   SELECT * FROM (SELECT 'Admin', 'lifechoices', '@Lifechoices1234') as temp \
+   WHERE NOT EXISTS \
+   (SELECT 'lifechoices' FROM admin WHERE username = 'lifechoices') LIMIT 1")
 
-
-
-
+db.commit()
 
 
 def login():
@@ -45,13 +50,15 @@ def login():
     if datab:
         mb.showinfo("Login", "login successful")
         admin_login.destroy()
-        import tkinter_gui.admin_rights_FE
+        import admin_rights_FE
     else:
         mb.showerror("Unsuccessful", "Login failed")
 
 def back():
     admin_login.destroy()
-    import tkinter_gui.main
+    import main1
+    if __name__ == '__main__':
+        ip = main1.Login
 
 
 

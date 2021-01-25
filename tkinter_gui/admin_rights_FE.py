@@ -2,14 +2,22 @@ import mysql.connector
 from tkinter import *
 from tkinter import messagebox as mb
 from tkinter import *
-from PIL import ImageTk, Image
+from PIL import Image
+from PIL import ImageTk
 import datetime
 import os
+import time
+import pipes
+import subprocess
 
 
+
+admin = Tk()
+admin.resizable(False, False)
+admin.title("Admin Page")
 db = mysql.connector.connect(
-    user="root",
-    password="Shane3004#",
+    user="lifechoices",
+    password="@Lifechoices1234",
     host="localhost",
     database="lifechoicesonline",
     auth_plugin="mysql_native_password"
@@ -52,28 +60,28 @@ def display():
             liP.insert(END, x)
         liP.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT username FROM time_reg")
+        cursor.execute("SELECT full_name FROM time_in")
 
         tUn = cursor.fetchall()
         for x in tUn:
             Liu.insert(END, x)
         Liu.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT date FROM time_reg")
+        cursor.execute("SELECT date FROM time_in")
 
         d = cursor.fetchall()
         for x in d:
             Lid.insert(END, x)
         Lid.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT login_time FROM time_reg")
+        cursor.execute("SELECT logged_in FROM time_in")
 
         timeIn = cursor.fetchall()
         for x in timeIn:
             LiTi.insert(END, x)
         LiTi.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT logout_time FROM time_out")
+        cursor.execute("SELECT logged_out FROM time_out")
 
         timeout = cursor.fetchall()
         for x in timeout:
@@ -113,28 +121,28 @@ def display():
             liP.insert(END, x)
         liP.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT username FROM time_reg")
+        cursor.execute("SELECT full_name FROM time_in")
 
         tUn = cursor.fetchall()
         for x in tUn:
             Liu.insert(END, x)
         Liu.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT date FROM time_reg")
+        cursor.execute("SELECT date FROM time_in")
 
         d = cursor.fetchall()
         for x in d:
             Lid.insert(END, x)
         Lid.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT login_time FROM time_reg")
+        cursor.execute("SELECT logged_in FROM time_in")
 
         timeIn = cursor.fetchall()
         for x in timeIn:
             LiTi.insert(END, x)
         LiTi.insert(END, str(cursor.rowcount) + " rows")
 
-        cursor.execute("SELECT logout_time FROM time_out")
+        cursor.execute("SELECT logged_out FROM time_out")
 
         timeIn = cursor.fetchall()
         for x in timeIn:
@@ -197,7 +205,6 @@ def grant():
         mb.showerror("Attention", "Admin users online")
 
 def count():
-
     selection = var.get()
     if selection == 1:
         cursor = db.cursor()
@@ -215,14 +222,15 @@ def count():
         mb.showinfo("Attention", total)
 
 def dump():
-    pass
+    username = 'lifechoices'
+    password = '@Lifechoicesonlin1234'
+    database = 'lifechoicesonline'
 
+    with open('backup.sql','w') as output:
+        c = subprocess.Popen(['mysqldump', '-u',username,'-p%s'%password,database],
+                         stdout=output, shell=True)
 
-admin = Tk()
-admin.resizable(False, False)
-admin.title("Admin Page")
-
-pic = '../images/header.png'
+pic = 'header.png'
 img1 = ImageTk.PhotoImage(Image.open(pic))
 panel = Label(admin, image=img1, width=800, bg="black")
 panel.place(x=20, y=0)
@@ -296,13 +304,25 @@ updatebtn = Button(admin, text="Clear", width=5, bd=2, command=clear)
 grantbtn = Button(admin, text="Grant", width=5, bd=2, command=grant)
 quitbtn = Button(admin, text="Count", width=5, bd=2, command=count)
 backup = Button(admin, text="Back-up", width=22, bg="red", fg="white", command=dump)
-showbtn.place(x=20, y=350)
-addbtn.place(x=80, y=350)
-removebtn.place(x=140, y=350)
-updatebtn.place(x=20, y=390)
-grantbtn.place(x=80, y=390)
-quitbtn.place(x=140, y=390)
+showbtn.place(x=15, y=350)
+addbtn.place(x=90, y=350)
+removebtn.place(x=165, y=350)
+updatebtn.place(x=15, y=390)
+grantbtn.place(x=90, y=390)
+quitbtn.place(x=165, y=390)
 backup.place(x=20, y=430)
+
+frame = Frame(admin, width=212, height=90, bg="black")
+frame.place(x=0, y=460)
+instruc = Label(frame, text="Instructions", bg='black', fg="white")
+instruc.pack()
+
+instruc1 = Label(frame, text="1. fill in fields as required", bg='black', fg="white")
+instruc1.pack()
+
+instruc2 = Label(frame, text="2. fill in the fullname entry to delete a user", bg='black', fg="white")
+instruc2.pack()
+
 
 
 var = IntVar()

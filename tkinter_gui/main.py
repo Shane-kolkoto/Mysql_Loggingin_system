@@ -2,17 +2,24 @@ from tkinter import *
 import mysql.connector
 from tkinter import messagebox as mb
 from datetime import *
-import PIL, ImageTk, Image
+from PIL import Image
+from PIL import ImageTk
 
 db = mysql.connector.connect(
-    user="root",
-    password="Shane3004#",
+    user="lifechoices",
+    password="@Lifechoices1234",
     host="localhost",
-    database="lifechoicesonline",
+    database="",
     auth_plugin="mysql_native_password"
 )
 
 cursor = db.cursor()
+cursor.execute("create database if not exists lifechoicesonline")
+cursor.execute("use lifechoicesonline")
+cursor.execute("CREATE TABLE IF NOT EXISTS time_in(full_name varchar(60) Default null, date date, logged_in time)")
+db.commit()
+cursor.execute("CREATE TABLE IF NOT EXISTS time_out(full_name varchar(60) Default null, date date, logged_out time)")
+db.commit()
 
 
 def show():
@@ -20,7 +27,7 @@ def show():
 
 def showAdmin():  # Function to show admin
     Login.destroy()
-    import tkinter_gui.admin_login
+    import admin_login
 
 
 def login():  # Function to login
@@ -29,21 +36,16 @@ def login():  # Function to login
     sql = "select * from users where username=%s and password=%s"
     cursor.execute(sql, [(usr), (p)])
     datab = cursor.fetchall()
-    login = datetime.now()
-    x = login.strftime("%H:%M:%S")
-    dt = login.strftime("%d/%m/%y")
-    time = usr, str(dt), str(x)
-    comm_time = "INSERT INTO time_reg(username, date, login_time)VALUES (%s, %s, %s)"
-    cursor.execute(comm_time, time)
     db.commit()
     mb.showinfo("Message", "Login successfully")
 
     if datab:
         Login.destroy()
-        logout = datetime.now()
-        y = logout.strftime("%H:%M:%S")
+        login1 = datetime.now()
+        y = login1.strftime("%H:%M:%S")
+        dt = login1.strftime("%d/%m/%y")
         time1 = usr, str(dt),  str(y)
-        comm_time1 = "INSERT INTO time_out(username, date, logout_time)VALUES (%s, %s, %s)"
+        comm_time1 = "INSERT INTO time_in(full_name, date, logged_in)VALUES (%s, %s, %s)"
         cursor.execute(comm_time1, time1)
         db.commit()
 
@@ -51,7 +53,7 @@ def login():  # Function to login
         phone.title("Logout")
         phone.geometry("400x200")
 
-        path = '../images/header.png'
+        path = 'header.png'
         img = ImageTk.PhotoImage(Image.open(path))
         panel = Label(phone, image=img, width=400, bg="black")
         panel.place(x=0, y=0)
@@ -60,13 +62,14 @@ def login():  # Function to login
         mobile.place(x=10, y=100)
 
         mobile_ent = Entry(phone)
-        mobile_ent.place(x=110, y=100)
+        mobile_ent.place(x=130, y=100)
 
         def logg_out():
+
             logout = datetime.now()
             y = logout.strftime("%H:%M:%S")
             time1 = usr, str(dt), str(y)
-            comm_time1 = "INSERT INTO time_out(username, date, logout_time)VALUES (%s, %s, %s)"
+            comm_time1 = "INSERT INTO time_out(full_name, date, logged_out)VALUES (%s, %s, %s)"
             cursor.execute(comm_time1, time1)
             db.commit()
             mb.showinfo("Login", "logout successful")
@@ -98,7 +101,7 @@ def login():  # Function to login
 
 def createUser():
     Login.destroy()
-    import tkinter_gui.reg
+    import reg
 
 
 Login = Tk()
@@ -107,7 +110,7 @@ Login.title("Login")
 
 
 #Welcome intro
-path = '../images/header.png'
+path = 'header.png'
 img = ImageTk.PhotoImage(Image.open(path))
 panel = Label(Login, image=img, width=400, bg="black")
 panel.place(x=0, y=0)
@@ -133,9 +136,9 @@ usrlb.place(x=10, y=120)
 usrame.place(x=85, y=120)
 passlb.place(x=10, y=170)
 pss.place(x=85, y=170)
-shwPss.place(x=250, y=145)
-btn.place(x=110, y=230)
-btnLogin.place(x=210, y=230)
+shwPss.place(x=265, y=145)
+btn.place(x=100, y=230)
+btnLogin.place(x=220, y=230)
 
 
 #Center Gui to screen
@@ -154,3 +157,4 @@ Login.bind("<Control-a>", lambda i: showAdmin())
 Login.configure(bg="black")
 Login.geometry("400x270")
 Login.mainloop()
+
